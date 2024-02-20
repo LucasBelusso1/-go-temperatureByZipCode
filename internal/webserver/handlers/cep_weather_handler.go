@@ -23,7 +23,7 @@ func GetTemperatureByZipCode(w http.ResponseWriter, r *http.Request) {
 
 	if cepResponse.Localidade == "" {
 		w.WriteHeader(http.StatusNotFound)
-		w.Write([]byte("Cep not found"))
+		w.Write([]byte("Can not find zipcode"))
 		return
 	}
 
