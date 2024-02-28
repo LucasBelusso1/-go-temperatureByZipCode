@@ -10,19 +10,19 @@ import (
 	"github.com/go-chi/chi/v5/middleware"
 )
 
+func init() {
+	config.LoadConfig()
+	log.Printf("Using config %+v", config.GetConfig())
+}
+
 func main() {
-	err := config.LoadConfig(".")
-
-	if err != nil {
-		log.Fatalln("Couldn't read configurations", err)
-		panic(err)
-	}
-
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
 
 	r.Get(`/{cep:^\d{8}$}`, handlers.GetTemperatureByZipCode)
 
-	http.ListenAndServe(":8080", r)
+	configs := config.GetConfig()
+	http.ListenAndServe(":"+configs.Port, r)
+	log.Printf("Listening on port %s", configs.Port)
 }

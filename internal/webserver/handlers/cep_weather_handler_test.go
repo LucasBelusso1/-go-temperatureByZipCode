@@ -30,7 +30,7 @@ func TestRequestWeather(t *testing.T) {
 		assert.NoError(t, err)
 	}()
 
-	err = config.LoadConfig(".")
+	config.LoadConfig()
 
 	assert.NoError(t, err, "Error returned when trying to read .env file.")
 
