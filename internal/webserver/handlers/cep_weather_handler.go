@@ -3,6 +3,7 @@ package handlers
 import (
 	"encoding/json"
 	"io"
+	"log"
 	"net/http"
 	"net/url"
 
@@ -14,6 +15,7 @@ import (
 func GetTemperatureByZipCode(w http.ResponseWriter, r *http.Request) {
 	cep := chi.URLParam(r, "cep")
 	cepResponse, err := requestCEP(cep)
+	log.Printf("CEP: %s", cep)
 
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -21,12 +23,15 @@ func GetTemperatureByZipCode(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	log.Printf("Localidade %s", cepResponse.Localidade)
+
 	if cepResponse.Localidade == "" {
 		w.WriteHeader(http.StatusNotFound)
 		w.Write([]byte("Can not find zipcode"))
 		return
 	}
 
+	log.Printf("Got into requestWeather")
 	weatherResponse, err := requestWeather(cepResponse)
 
 	if err != nil {
@@ -83,11 +88,13 @@ func requestCEP(cep string) (dto.ViaCepOutput, error) {
 
 func requestWeather(data dto.ViaCepOutput) (dto.WeatherOutput, error) {
 	var weatherDto dto.WeatherOutput
-	apiKey := config.Config.GetString("WEATHER_API_KEY")
+	configs := config.GetConfig()
 
-	url := "https://api.weatherapi.com/v1/current.json?key=" + apiKey + "&q=" + url.QueryEscape(data.Localidade)
+	url := "http://api.weatherapi.com/v1/current.json?key=" + configs.WeatherApiKey + "&q=" + url.QueryEscape(data.Localidade)
 
 	res, err := http.Get(url)
+
+	log.Printf("Made the weather request")
 
 	if err != nil {
 		return weatherDto, err
