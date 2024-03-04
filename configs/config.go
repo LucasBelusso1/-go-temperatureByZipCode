@@ -1,11 +1,7 @@
 package config
 
 import (
-	"errors"
-	"log"
 	"os"
-
-	"github.com/spf13/viper"
 )
 
 var config Config

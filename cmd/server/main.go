@@ -20,7 +20,7 @@ func main() {
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
 
-	r.Get(`/{cep:^\d{8}$}`, handlers.GetTemperatureByZipCode)
+	r.Get(`/{cep}`, handlers.GetTemperatureByZipCode)
 
 	configs := config.GetConfig()
 	http.ListenAndServe(":"+configs.Port, r)
